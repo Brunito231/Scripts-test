@@ -1,0 +1,120 @@
+import random
+
+class JuegoAdivinanzaAvanzado:
+    def __init__(self):
+        self.numero_secreto = random.randint(1, 200)
+        self.niveles = ['Fácil', 'Intermedio', 'Difícil']
+        self.nivel_actual = 0
+        self.intentos = 0
+        self.max_intentos = 10
+        self.puntuacion = 0
+        self.poderes = {'doble_intentos': False, 'pista_extra': False}
+
+    def mostrar_pistas(self):
+        if self.nivel_actual == 0:
+            print("¡Bienvenido al nivel Fácil!")
+            print("Estoy pensando en un número entre 1 y 50.")
+        elif self.nivel_actual == 1:
+            print("¡Has pasado al nivel Intermedio!")
+            print("Estoy pensando en un número entre 1 y 100.")
+        elif self.nivel_actual == 2:
+            print("¡Felicidades, has alcanzado el nivel Difícil!")
+            print("Estoy pensando en un número entre 1 y 200.")
+
+    def mostrar_poderes_disponibles(self):
+        print("Poderes disponibles:")
+        for poder, disponible in self.poderes.items():
+            print(f"{poder.replace('_', ' ').title()}: {'Sí' if disponible else 'No'}")
+
+    def jugar(self):
+        self.mostrar_pistas()
+
+        while self.intentos < self.max_intentos:
+            intento = self.obtener_intento()
+            self.intentos += 1
+
+            if intento == self.numero_secreto:
+                print(f"Felicidades, ¡adivinaste el número en {self.intentos} intentos!")
+                self.calcular_puntuacion()
+                break
+            elif intento < self.numero_secreto:
+                print("Demasiado bajo. Intenta de nuevo.")
+            else:
+                print("Demasiado alto. Intenta de nuevo.")
+
+        if self.intentos == self.max_intentos:
+            print(f"Lo siento, has agotado tus {self.max_intentos} intentos. El número secreto era {self.numero_secreto}.")
+
+    def obtener_intento(self):
+        while True:
+            try:
+                intento = int(input("Adivina el número: "))
+                if 1 <= intento <= (50 if self.nivel_actual == 0 else (100 if self.nivel_actual == 1 else 200)):
+                    return intento
+                else:
+                    print("Por favor, ingresa un número válido dentro del rango permitido.")
+            except ValueError:
+                print("Por favor, ingresa un número entero válido.")
+
+    def usar_poder(self):
+        self.mostrar_poderes_disponibles()
+
+        poder_elegido = input("Elige un poder para usar (o escribe 'continuar' para seguir): ").lower()
+
+        if poder_elegido == 'doble_intentos' and self.poderes['doble_intentos']:
+            self.max_intentos *= 2
+            print(f"Tus intentos ahora se han duplicado. Nuevos intentos disponibles: {self.max_intentos}")
+        elif poder_elegido == 'pista_extra' and self.poderes['pista_extra']:
+            self.mostrar_pistas()
+        elif poder_elegido == 'continuar':
+            print("Continuemos.")
+        else:
+            print("Poder no válido. Intenta de nuevo.")
+
+    def calcular_puntuacion(self):
+        bonus_por_nivel = 100
+        bonus_por_intentos = 50
+
+        puntuacion_nivel = (len(self.niveles) - self.nivel_actual) * bonus_por_nivel
+        puntuacion_intentos = (self.max_intentos - self.intentos) * bonus_por_intentos
+
+        self.puntuacion += puntuacion_nivel + puntuacion_intentos
+
+        print(f"\n¡Has ganado! Puntuación total: {self.puntuacion}\n")
+
+        if self.nivel_actual < len(self.niveles) - 1:
+            respuesta = input(f"¿Deseas pasar al siguiente nivel ({self.niveles[self.nivel_actual + 1]})? (Sí/No): ")
+            if respuesta.lower() == 'si' or respuesta.lower() == 's':
+                self.nivel_actual += 1
+                self.numero_secreto = random.randint(1, (50 if self.nivel_actual == 0 else (100 if self.nivel_actual == 1 else 200)))
+                self.intentos = 0
+                self.mostrar_pistas()
+                return True
+
+        print("Fin del juego. ¡Gracias por jugar!")
+        return False
+
+    def iniciar_nuevo_juego(self):
+        while True:
+            self.jugar()
+
+            if not self.calcular_puntuacion():
+                break
+
+            if self.nivel_actual < len(self.niveles) - 1:
+                respuesta = input("¿Quieres comenzar un nuevo juego desde el primer nivel? (Sí/No): ")
+                if respuesta.lower() != 'si' and respuesta.lower() != 's':
+                    break
+                else:
+                    self.nivel_actual = 0
+                    self.numero_secreto = random.randint(1, 50)
+                    self.intentos = 0
+                    self.max_intentos = 10
+                    self.poderes = {'doble_intentos': False, 'pista_extra': False}
+                    print("\nNuevo juego iniciado. ¡Buena suerte!\n")
+            else:
+                break
+
+if __name__ == "__main__":
+    juego = JuegoAdivinanzaAvanzado()
+    juego.iniciar_nuevo_juego()

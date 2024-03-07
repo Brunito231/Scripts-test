@@ -1,0 +1,35 @@
+import random
+import math
+
+def generar_numero_aleatorio():
+    return random.randint(1, 100)
+
+def calcular_factorial(numero):
+    if numero == 0:
+        return 1
+    else:
+        return numero * calcular_factorial(numero - 1)
+
+def invertir_cadena(cadena):
+    return cadena[::-1]
+
+def calcular_hipotenusa(cateto_a, cateto_b):
+    return math.sqrt(cateto_a**2 + cateto_b**2)
+
+# Generar un número aleatorio
+numero_aleatorio = generar_numero_aleatorio()
+print(f"Número aleatorio generado: {numero_aleatorio}")
+
+# Calcular el factorial del número aleatorio
+factorial_numero_aleatorio = calcular_factorial(numero_aleatorio)
+print(f"Factorial de {numero_aleatorio}: {factorial_numero_aleatorio}")
+
+# Invertir la cadena factorial
+cadena_factorial_invertida = invertir_cadena(str(factorial_numero_aleatorio))
+print(f"Cadena invertida del factorial: {cadena_factorial_invertida}")
+
+# Calcular la hipotenusa de un triángulo con catetos aleatorios
+cateto_a = generar_numero_aleatorio()
+cateto_b = generar_numero_aleatorio()
+hipotenusa = calcular_hipotenusa(cateto_a, cateto_b)
+print(f"Hipotenusa de un triángulo con catetos {cateto_a} y {cateto_b}: {hipotenusa}")

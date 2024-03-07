@@ -1,0 +1,80 @@
+import random
+
+class Jugador:
+    def __init__(self, nombre, clase):
+        self.nombre = nombre
+        self.clase = clase
+        self.salud = 100
+        self.ataque = 10
+        self.defensa = 5
+        self.experiencia = 0
+        self.nivel = 1
+
+    def mostrar_estado(self):
+        print(f"{self.nombre} - Clase: {self.clase} - Nivel: {self.nivel} - Salud: {self.salud} - Ataque: {self.ataque} - Defensa: {self.defensa} - Experiencia: {self.experiencia}")
+
+    def atacar(self, enemigo):
+        danio = max(0, self.ataque - enemigo.defensa)
+        enemigo.salud -= danio
+        print(f"Atacaste al enemigo y le hiciste {danio} de daño.")
+
+class Enemigo:
+    def __init__(self, nombre, salud, ataque, defensa):
+        self.nombre = nombre
+        self.salud = salud
+        self.ataque = ataque
+        self.defensa = defensa
+
+    def atacar(self, jugador):
+        danio = max(0, self.ataque - jugador.defensa)
+        jugador.salud -= danio
+        print(f"{self.nombre} te atacó y te hizo {danio} de daño.")
+
+def batalla(jugador, enemigo):
+    print(f"¡Te encuentras con un {enemigo.nombre}!")
+
+    while jugador.salud > 0 and enemigo.salud > 0:
+        jugador.mostrar_estado()
+        enemigo.atacar(jugador)
+
+        if jugador.salud <= 0:
+            print("Has sido derrotado. Game over.")
+            break
+
+        jugador.atacar(enemigo)
+
+        if enemigo.salud <= 0:
+            print(f"¡Has derrotado al {enemigo.nombre}!")
+
+# Función para ganar experiencia y subir de nivel
+def ganar_experiencia(jugador, experiencia_ganada):
+    jugador.experiencia += experiencia_ganada
+    print(f"Ganaste {experiencia_ganada} de experiencia.")
+
+    # Comprobar si el jugador sube de nivel
+    if jugador.experiencia >= jugador.nivel * 10:
+        jugador.nivel += 1
+        jugador.salud += 10
+        jugador.ataque += 5
+        jugador.defensa += 2
+        print(f"Felicidades, has subido al nivel {jugador.nivel}!")
+
+if __name__ == "__main__":
+    nombre_jugador = input("¡Bienvenido al juego RPG! Ingresa tu nombre: ")
+    clase_jugador = input("Elige tu clase (Guerrero/Mago/Arquero): ")
+
+    jugador_principal = Jugador(nombre_jugador, clase_jugador)
+
+    print(f"Bienvenido, {jugador_principal.nombre}, el valiente {jugador_principal.clase}. ¡Comienza tu aventura!\n")
+
+    enemigos = [
+        Enemigo("Orco", 30, 8, 3),
+        Enemigo("Esqueleto", 20, 5, 1),
+        Enemigo("Dragón", 50, 12, 6)
+    ]
+
+    for enemigo in enemigos:
+        batalla(jugador_principal, enemigo)
+        ganar_experiencia(jugador_principal, 10)
+
+    print("¡Has completado tu aventura RPG! ¡Felicidades!")

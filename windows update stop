@@ -1,0 +1,13 @@
+# Verificar si se está ejecutando el script con privilegios de administrador
+if (-not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
+    Write-Host "Este script debe ejecutarse con privilegios de administrador."
+    exit
+}
+
+# Pausar el servicio de Windows Update
+Stop-Service -Name wuauserv
+
+# Deshabilitar el servicio de Windows Update para que no se inicie automáticamente
+Set-Service -Name wuauserv -StartupType Disabled
+
+Write-Host "Servicio de Windows Update pausado y deshabilitado exitosamente."

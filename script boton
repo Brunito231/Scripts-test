@@ -1,0 +1,17 @@
+// Supongamos que tienes un botón con el id "miBoton" en tu página web
+const boton = document.getElementById("miBoton");
+
+// Función para simular hacer clic en el botón
+function simularClic() {
+    // Verificar si el botón existe
+    if (boton) {
+        // Hacer clic en el botón
+        boton.click();
+        console.log("Clic simulado en el botón.");
+    } else {
+        console.log("No se encontró el botón en la página.");
+    }
+}
+
+// Llamar a la función para simular el clic
+simularClic();

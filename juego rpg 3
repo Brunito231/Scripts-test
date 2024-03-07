@@ -1,0 +1,158 @@
+import random
+
+class Jugador:
+    def __init__(self, nombre, clase):
+        self.nombre = nombre
+        self.clase = clase
+        self.salud = 100
+        self.ataque = 10
+        self.defensa = 5
+        self.experiencia = 0
+        self.nivel = 1
+        self.inventario = {'Pociones de salud': 3, 'Antídotos': 1}
+
+    def mostrar_estado(self):
+        print(f"{self.nombre} - Clase: {self.clase} - Nivel: {self.nivel} - Salud: {self.salud} - Ataque: {self.ataque} - Defensa: {self.defensa} - Experiencia: {self.experiencia}")
+        print(f"Inventario: {self.inventario}")
+
+    def atacar(self, enemigo):
+        danio = max(0, self.ataque - enemigo.defensa)
+        enemigo.salud -= danio
+        print(f"Atacaste al {enemigo.nombre} y le hiciste {danio} de daño.")
+
+    def usar_pocion(self):
+        if 'Pociones de salud' in self.inventario and self.inventario['Pociones de salud'] > 0:
+            self.salud += 20
+            self.inventario['Pociones de salud'] -= 1
+            print("Usaste una poción de salud. ¡Recuperaste 20 de salud!")
+        else:
+            print("No tienes pociones de salud.")
+
+class Enemigo:
+    def __init__(self, nombre, salud, ataque, defensa, experiencia_recompensa):
+        self.nombre = nombre
+        self.salud = salud
+        self.ataque = ataque
+        self.defensa = defensa
+        self.experiencia_recompensa = experiencia_recompensa
+
+    def atacar(self, jugador):
+        danio = max(0, self.ataque - jugador.defensa)
+        jugador.salud -= danio
+        print(f"{self.nombre} te atacó y te hizo {danio} de daño.")
+
+def tienda(jugador):
+    print("¡Bienvenido a la tienda!")
+    print("1. Espada afilada - 50 monedas")
+    print("2. Armadura de placas - 75 monedas")
+    print("3. Antídoto - 30 monedas")
+    print("4. Salir")
+
+    eleccion = input("Elige un artículo para comprar (1-4): ")
+
+    if eleccion == '1' and 'Espada afilada' not in jugador.inventario and jugador.experiencia >= 20:
+        jugador.inventario['Espada afilada'] = 1
+        jugador.ataque += 15
+        jugador.experiencia -= 20
+        print("Compraste una Espada afilada. ¡Tu ataque aumentó en 15!")
+    elif eleccion == '2' and 'Armadura de placas' not in jugador.inventario and jugador.experiencia >= 30:
+        jugador.inventario['Armadura de placas'] = 1
+        jugador.defensa += 10
+        jugador.experiencia -= 30
+        print("Compraste una Armadura de placas. ¡Tu defensa aumentó en 10!")
+    elif eleccion == '3' and 'Antídoto' not in jugador.inventario and jugador.experiencia >= 15:
+        jugador.inventario['Antídoto'] = 2
+        jugador.experiencia -= 15
+        print("Compraste Antídotos. ¡Ahora tienes 2 Antídotos en tu inventario!")
+    elif eleccion == '4':
+        print("Gracias por tu visita a la tienda.")
+    else:
+        print("No tienes suficiente experiencia o ya posees ese artículo. ¡Inténtalo de nuevo!")
+
+def misiones(jugador):
+    print("¡Misiones disponibles!")
+    print("1. Eliminar a los Lobos en el Bosque - Recompensa: 30 de experiencia")
+    print("2. Rescatar al Aldeano en la Montaña - Recompensa: 50 de experiencia y 1 Poción de salud")
+    print("3. Volver")
+
+    eleccion = input("Elige una misión (1-3): ")
+
+    if eleccion == '1':
+        lobos = Enemigo("Lobos", 40, 8, 3, 30)
+        batalla(jugador, lobos)
+    elif eleccion == '2':
+        aldeano = Enemigo("Aldeano", 30, 5, 2, 50)
+        batalla(jugador, aldeano)
+        jugador.experiencia += 50
+        jugador.inventario['Pociones de salud'] += 1
+        print("¡Rescataste al aldeano y ganaste 50 de experiencia y 1 Poción de salud!")
+    elif eleccion == '3':
+        print("Regresaste de las misiones.")
+
+def batalla(jugador, enemigo):
+    print(f"¡Te encuentras con un {enemigo.nombre}!")
+
+    while jugador.salud > 0 and enemigo.salud > 0:
+        jugador.mostrar_estado()
+        print("1. Atacar")
+        print("2. Usar Poción de salud")
+        print("3. Huir")
+
+        eleccion = input("Elige una opción (1-3): ")
+
+        if eleccion == '1':
+            jugador.atacar(enemigo)
+            if enemigo.salud > 0:
+                enemigo.atacar(jugador)
+        elif eleccion == '2':
+            jugador.usar_pocion()
+            enemigo.atacar(jugador)
+        elif eleccion == '3':
+            print("Escapaste de la batalla.")
+            break
+        else:
+            print("Opción no válida. ¡Inténtalo de nuevo!")
+
+        if jugador.salud <= 0:
+            print("Has sido derrotado. Game over.")
+            break
+
+        if enemigo.salud <= 0:
+            print(f"¡Has derrotado al {enemigo.nombre}!")
+            jugador.experiencia += enemigo.experiencia_recompensa
+            print(f"Ganaste {enemigo.experiencia_recompensa} de experiencia.")
+            break
+
+if __name__ == "__main__":
+    nombre_jugador = input("¡Bienvenido al juego RPG! Ingresa tu nombre: ")
+    clase_jugador = input("Elige tu clase (Guerrero/Mago/Arquero): ")
+
+    jugador_principal = Jugador(nombre_jugador, clase_jugador)
+
+    print(f"Bienvenido, {jugador_principal.nombre}, el valiente {jugador_principal.clase}. ¡Comienza tu aventura!\n")
+
+    while jugador_principal.salud > 0:
+        print("Opciones:")
+        print("1. Batalla")
+        print("2. Tienda")
+        print("3. Misiones")
+        print("4. Salir")
+
+        eleccion = input("Elige una opción (1-4): ")
+
+        if eleccion == '1':
+            enemigo_aleatorio = random.choice([Enemigo("Ladrón", 20, 6, 2, 15), Enemigo("Goblin", 25, 7, 3, 20)])
+            batalla(jugador_principal, enemigo_aleatorio)
+        elif eleccion == '2':
+            tienda(jugador_principal)
+        elif eleccion == '3':
+            misiones(jugador_principal)
+        elif eleccion == '4':
+            print("Gracias por jugar. ¡Hasta la próxima!")
+            break
+        else:
+            print("Opción no válida. ¡Inténtalo de nuevo!")
+
+        if jugador_principal.nivel >= 5:
+            print("¡Felicidades, has alcanzado el nivel 5 y has completado el juego!")
+            break

@@ -1,0 +1,67 @@
+import random
+
+class JuegoAdivinanza:
+    def __init__(self):
+        self.numero_secreto = random.randint(1, 100)
+        self.intentos = 0
+        self.max_intentos = 10
+        self.niveles = ['Fácil', 'Intermedio', 'Difícil']
+        self.nivel_actual = 0
+
+    def mostrar_pistas(self):
+        if self.nivel_actual == 0:
+            print("¡Bienvenido al nivel Fácil!")
+            print("Estoy pensando en un número entre 1 y 50.")
+        elif self.nivel_actual == 1:
+            print("¡Has pasado al nivel Intermedio!")
+            print("Estoy pensando en un número entre 1 y 100.")
+        elif self.nivel_actual == 2:
+            print("¡Felicidades, has alcanzado el nivel Difícil!")
+            print("Estoy pensando en un número entre 1 y 200.")
+
+    def jugar(self):
+        self.mostrar_pistas()
+
+        while self.intentos < self.max_intentos:
+            intento = self.obtener_intento()
+            self.intentos += 1
+
+            if intento == self.numero_secreto:
+                print(f"Felicidades, ¡adivinaste el número en {self.intentos} intentos!")
+                break
+            elif intento < self.numero_secreto:
+                print("Demasiado bajo. Intenta de nuevo.")
+            else:
+                print("Demasiado alto. Intenta de nuevo.")
+
+        if self.intentos == self.max_intentos:
+            print(f"Lo siento, has agotado tus {self.max_intentos} intentos. El número secreto era {self.numero_secreto}.")
+
+    def obtener_intento(self):
+        while True:
+            try:
+                intento = int(input("Adivina el número: "))
+                if 1 <= intento <= (50 if self.nivel_actual == 0 else (100 if self.nivel_actual == 1 else 200)):
+                    return intento
+                else:
+                    print("Por favor, ingresa un número válido dentro del rango permitido.")
+            except ValueError:
+                print("Por favor, ingresa un número entero válido.")
+
+    def iniciar_nuevo_nivel(self):
+        if self.nivel_actual < len(self.niveles) - 1:
+            respuesta = input(f"¿Deseas pasar al siguiente nivel ({self.niveles[self.nivel_actual + 1]})? (Sí/No): ")
+            if respuesta.lower() == 'si' or respuesta.lower() == 's':
+                self.nivel_actual += 1
+                self.numero_secreto = random.randint(1, (50 if self.nivel_actual == 0 else (100 if self.nivel_actual == 1 else 200)))
+                self.intentos = 0
+                self.mostrar_pistas()
+                return True
+        return False
+
+if __name__ == "__main__":
+    juego = JuegoAdivinanza()
+    juego.jugar()
+
+    if juego.iniciar_nuevo_nivel():
+        juego.jugar()

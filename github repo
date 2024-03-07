@@ -1,0 +1,47 @@
+# Crear una estructura de carpetas para un proyecto
+function CrearEstructuraProyecto($nombreProyecto) {
+    $carpetasProyecto = @("src", "docs", "tests", "lib", "bin", "data")
+    
+    New-Item -ItemType Directory -Path $nombreProyecto -Force | Out-Null
+    Set-Location $nombreProyecto
+
+    foreach ($carpeta in $carpetasProyecto) {
+        New-Item -ItemType Directory -Path $carpeta -Force | Out-Null
+    }
+
+    Write-Host "Estructura de carpetas creada para el proyecto '$nombreProyecto'."
+}
+
+# Descargar un repositorio desde GitHub
+function DescargarRepositorioGitHub($usuario, $repositorio) {
+    $urlRepositorio = "https://github.com/$usuario/$repositorio.git"
+    git clone $urlRepositorio
+
+    Write-Host "Repositorio '$repositorio' descargado desde GitHub."
+}
+
+# Instalar dependencias utilizando npm
+function InstalarDependencias() {
+    if (Test-Path "package.json") {
+        npm install
+        Write-Host "Dependencias instaladas correctamente."
+    } else {
+        Write-Host "No se encontró un archivo package.json en el directorio actual."
+    }
+}
+
+# Compilar código (ejemplo: TypeScript)
+function CompilarCodigo() {
+    if (Test-Path "tsconfig.json") {
+        npm run build
+        Write-Host "Código compilado correctamente."
+    } else {
+        Write-Host "No se encontró un archivo tsconfig.json en el directorio actual."
+    }
+}
+
+# Uso de las funciones
+CrearEstructuraProyecto "MiProyecto"
+DescargarRepositorioGitHub "usuarioGitHub" "repositorioEjemplo"
+InstalarDependencias
+CompilarCodigo

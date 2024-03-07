@@ -1,0 +1,58 @@
+const fs = require('fs-extra');
+const path = require('path');
+
+// Directorio base (ajusta según tu configuración)
+const directorioBase = path.join(require('os').homedir(), 'Desktop');
+
+async function liberarEspacio() {
+    try {
+        console.log('Liberando espacio en el disco...');
+
+        // Eliminar archivos temporales en el escritorio
+        await eliminarArchivosTemporales();
+
+        // Eliminar archivos de logs en el escritorio
+        await eliminarArchivosLogs();
+
+        console.log('Espacio en el disco liberado exitosamente.');
+    } catch (error) {
+        console.error('Error al liberar espacio en el disco:', error);
+    }
+}
+
+async function eliminarArchivosTemporales() {
+    const directorioTemporales = path.join(directorioBase, 'Temporales');
+
+    try {
+        await fs.ensureDir(directorioTemporales);
+
+        // Filtrar archivos temporales (por ejemplo, archivos que contienen "temp" en el nombre)
+        const archivosTemporales = await fs.readdir(directorioTemporales);
+        for (const archivoTemporal of archivosTemporales) {
+            await fs.remove(path.join(directorioTemporales, archivoTemporal));
+            console.log(`Eliminado archivo temporal: ${archivoTemporal}`);
+        }
+    } catch (error) {
+        console.error('Error al eliminar archivos temporales:', error);
+    }
+}
+
+async function eliminarArchivosLogs() {
+    const directorioLogs = path.join(directorioBase, 'Logs');
+
+    try {
+        await fs.ensureDir(directorioLogs);
+
+        // Filtrar archivos de logs (por ejemplo, archivos que contienen "log" en el nombre)
+        const archivosLogs = await fs.readdir(directorioLogs);
+        for (const archivoLog of archivosLogs) {
+            await fs.remove(path.join(directorioLogs, archivoLog));
+            console.log(`Eliminado archivo de log: ${archivoLog}`);
+        }
+    } catch (error) {
+        console.error('Error al eliminar archivos de logs:', error);
+    }
+}
+
+// Llamar a la función para liberar espacio en el disco
+liberarEspacio();

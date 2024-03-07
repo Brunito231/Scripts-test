@@ -1,0 +1,40 @@
+const fs = require('fs');
+const path = require('path');
+
+// Función para leer un archivo y mostrar su contenido
+function leerArchivo(rutaArchivo) {
+    try {
+        const contenido = fs.readFileSync(rutaArchivo, 'utf-8');
+        console.log(`Contenido del archivo ${rutaArchivo}:\n${contenido}`);
+    } catch (error) {
+        console.error(`Error al leer el archivo ${rutaArchivo}: ${error.message}`);
+    }
+}
+
+// Función para escribir en un archivo
+function escribirEnArchivo(rutaArchivo, contenido) {
+    try {
+        fs.writeFileSync(rutaArchivo, contenido, 'utf-8');
+        console.log(`Contenido escrito en el archivo ${rutaArchivo}`);
+    } catch (error) {
+        console.error(`Error al escribir en el archivo ${rutaArchivo}: ${error.message}`);
+    }
+}
+
+// Función para listar archivos en un directorio
+function listarArchivosEnDirectorio(rutaDirectorio) {
+    try {
+        const archivos = fs.readdirSync(rutaDirectorio);
+        console.log(`Archivos en el directorio ${rutaDirectorio}:\n${archivos.join('\n')}`);
+    } catch (error) {
+        console.error(`Error al listar archivos en el directorio ${rutaDirectorio}: ${error.message}`);
+    }
+}
+
+// Ejemplo de uso
+const archivoEjemplo = path.join(__dirname, 'ejemplo.txt');
+escribirEnArchivo(archivoEjemplo, 'Hola, mundo! Este es un archivo de ejemplo.');
+
+leerArchivo(archivoEjemplo);
+
+listarArchivosEnDirectorio(__dirname);

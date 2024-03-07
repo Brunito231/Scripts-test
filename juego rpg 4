@@ -1,0 +1,130 @@
+import random
+
+class Jugador:
+    def __init__(self, nombre):
+        self.nombre = nombre
+        self.salud = 100
+        self.inventario = []
+        self.dinero = 50
+
+    def mostrar_estado(self):
+        print(f"{self.nombre} - Salud: {self.salud} - Dinero: {self.dinero} monedas")
+        print("Inventario:", self.inventario)
+
+class Ubicacion:
+    def __init__(self, nombre, descripcion, opciones, enemigos=[]):
+        self.nombre = nombre
+        self.descripcion = descripcion
+        self.opciones = opciones
+        self.enemigos = enemigos
+
+    def mostrar_descripcion(self):
+        print(self.descripcion)
+        print("Opciones disponibles:")
+        for i, opcion in enumerate(self.opciones, 1):
+            print(f"{i}. {opcion}")
+
+def batalla(jugador, enemigo):
+    print(f"¡Te encuentras con un {enemigo}!")
+
+    while jugador.salud > 0 and enemigo.salud > 0:
+        jugador.mostrar_estado()
+        print("1. Atacar")
+        print("2. Usar poción de salud")
+        print("3. Huir")
+
+        eleccion = input("Elige una opción (1-3): ")
+
+        if eleccion == '1':
+            danio_jugador = random.randint(5, 15)
+            danio_enemigo = random.randint(3, 10)
+            jugador.salud -= danio_enemigo
+            enemigo.salud -= danio_jugador
+            print(f"Atacaste al {enemigo} y le hiciste {danio_jugador} de daño. ¡Recibiste {danio_enemigo} de daño!")
+        elif eleccion == '2':
+            if 'Poción de salud' in jugador.inventario:
+                jugador.salud += 20
+                jugador.inventario.remove('Poción de salud')
+                print("Usaste una poción de salud. ¡Recuperaste 20 de salud!")
+                danio_enemigo = random.randint(3, 10)
+                jugador.salud -= danio_enemigo
+                print(f"¡Recibiste {danio_enemigo} de daño!")
+            else:
+                print("No tienes pociones de salud.")
+        elif eleccion == '3':
+            print("Escapaste de la batalla.")
+            break
+        else:
+            print("Opción no válida. ¡Inténtalo de nuevo!")
+
+        if jugador.salud <= 0:
+            print("Has sido derrotado. Game over.")
+            break
+
+        if enemigo.salud <= 0:
+            print(f"¡Has derrotado al {enemigo}!")
+            jugador.dinero += random.randint(10, 30)
+            print(f"Ganaste {jugador.dinero} monedas.")
+            break
+
+def explorar(jugador, ubicacion):
+    print(f"Exploras la {ubicacion.nombre}...")
+    if random.choice([True, False]):
+        enemigo_aleatorio = random.choice(['Lobo', 'Goblin', 'Bandido'])
+        print(f"¡Te encuentras con un {enemigo_aleatorio}!")
+        batalla(jugador, enemigo_aleatorio)
+    else:
+        print("No encuentras enemigos en esta área.")
+
+def tienda(jugador):
+    print("¡Bienvenido a la tienda!")
+    print("1. Espada de hierro - 20 monedas")
+    print("2. Armadura de cuero - 30 monedas")
+    print("3. Poción de salud - 10 monedas")
+    print("4. Salir")
+
+    eleccion = input("Elige un artículo para comprar (1-4): ")
+
+    if eleccion == '1' and jugador.dinero >= 20:
+        jugador.inventario.append('Espada de hierro')
+        jugador.dinero -= 20
+        print("Compraste una Espada de hierro.")
+    elif eleccion == '2' and jugador.dinero >= 30:
+        jugador.inventario.append('Armadura de cuero')
+        jugador.dinero -= 30
+        print("Compraste una Armadura de cuero.")
+    elif eleccion == '3' and jugador.dinero >= 10:
+        jugador.inventario.append('Poción de salud')
+        jugador.dinero -= 10
+        print("Compraste una Poción de salud.")
+    elif eleccion == '4':
+        print("Gracias por tu visita a la tienda.")
+    else:
+        print("No tienes suficiente dinero o esa opción no es válida.")
+
+if __name__ == "__main__":
+    jugador_principal = Jugador(input("¡Bienvenido al juego de aventuras! Ingresa tu nombre: "))
+    ubicacion_actual = Ubicacion("Bosque", "Te encuentras en un oscuro bosque.", ["Explorar", "Ir a la tienda", "Salir"])
+
+    while jugador_principal.salud > 0:
+        ubicacion_actual.mostrar_descripcion()
+        eleccion = input("Elige una opción (1-3): ")
+
+        if eleccion == '1':
+            explorar(jugador_principal, ubicacion_actual)
+        elif eleccion == '2':
+            tienda(jugador_principal)
+        elif eleccion == '3':
+            print("¡Gracias por jugar!")
+            break
+        else:
+            print("Opción no válida. ¡Inténtalo de nuevo!")
+
+        if random.choice([True, False]):
+            enemigo_aleatorio = random.choice(['Lobo', 'Goblin', 'Bandido'])
+            print(f"¡Te encuentras con un {enemigo_aleatorio}!")
+            batalla(jugador_principal, enemigo_aleatorio)
+
+        if jugador_principal.salud <= 0:
+            print("Has sido derrotado. Game over.")
+            break

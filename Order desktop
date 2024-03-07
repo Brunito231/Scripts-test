@@ -1,0 +1,54 @@
+const fs = require('fs-extra');
+const path = require('path');
+
+const escritorio = path.join(require('os').homedir(), 'Desktop');
+
+async function organizarEscritorio() {
+    try {
+        // Asegurarse de que el escritorio exista
+        await fs.ensureDir(escritorio);
+
+        // Leer archivos en el escritorio
+        const archivos = await fs.readdir(escritorio);
+
+        // Crear directorios para cada tipo de archivo
+        const tiposArchivos = ['Imágenes', 'Documentos', 'Música', 'Otros'];
+        for (const tipo of tiposArchivos) {
+            const directorioTipo = path.join(escritorio, tipo);
+            await fs.ensureDir(directorioTipo);
+        }
+
+        // Mover archivos a los directorios correspondientes
+        for (const archivo of archivos) {
+            const rutaArchivo = path.join(escritorio, archivo);
+            const tipoArchivo = obtenerTipoArchivo(archivo);
+
+            if (tiposArchivos.includes(tipoArchivo)) {
+                const directorioDestino = path.join(escritorio, tipoArchivo);
+                await fs.move(rutaArchivo, path.join(directorioDestino, archivo));
+                console.log(`Movido ${archivo} a ${tipoArchivo}`);
+            }
+        }
+
+        console.log('Proceso de organización completado.');
+    } catch (error) {
+        console.error('Error al organizar el escritorio:', error);
+    }
+}
+
+function obtenerTipoArchivo(archivo) {
+    const extension = path.extname(archivo).toLowerCase();
+
+    if (extension.match(/\.(jpg|jpeg|png|gif)$/)) {
+        return 'Imágenes';
+    } else if (extension.match(/\.(doc|docx|pdf|txt)$/)) {
+        return 'Documentos';
+    } else if (extension.match(/\.(mp3|wav)$/)) {
+        return 'Música';
+    } else {
+        return 'Otros';
+    }
+}
+
+// Llamar a la función para organizar el escritorio
+organizarEscritorio();

@@ -1,0 +1,24 @@
+# Verificar si hay actualizaciones pendientes
+$actualizacionesPendientes = Get-HotFix | Where-Object {$_.Description -like '*Update*'}
+
+if ($actualizacionesPendientes.Count -gt 0) {
+    Write-Host "Hay $($actualizacionesPendientes.Count) actualizaciones pendientes:"
+    $actualizacionesPendientes | Select-Object Description, InstalledOn
+
+    # Preguntar al usuario si desea instalar las actualizaciones antes de apagar
+    $respuesta = Read-Host "¿Desea instalar las actualizaciones antes de apagar? (Sí/No)"
+
+    if ($respuesta -eq 'Sí' -or $respuesta -eq 'Si' -or $respuesta -eq 's' -or $respuesta -eq 'si') {
+        Write-Host "Instalando actualizaciones..."
+        # Puedes agregar aquí el comando para instalar actualizaciones, por ejemplo:
+        # Install-WindowsUpdate -AcceptAll
+    } else {
+        Write-Host "No se instalarán las actualizaciones."
+    }
+} else {
+    Write-Host "No hay actualizaciones pendientes."
+}
+
+# Apagar el sistema
+Write-Host "Apagando el sistema..."
+Stop-Computer -Force

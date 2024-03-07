@@ -1,0 +1,101 @@
+import random
+
+class Jugador:
+    def __init__(self, nombre):
+        self.nombre = nombre
+        self.salud = 100
+        self.inventario = []
+
+    def mostrar_estado(self):
+        print(f"{self.nombre} - Salud: {self.salud} - Inventario: {', '.join(self.inventario)}")
+
+class JuegoAventuras:
+    def __init__(self):
+        self.jugador = None
+        self.ubicaciones = {
+            'Inicio': {'descripcion': 'Te encuentras en el punto de inicio.', 'opciones': ['Bosque', 'Ciudad']},
+            'Bosque': {'descripcion': 'Un oscuro bosque con senderos en todas direcciones.', 'opciones': ['Explorar', 'Volver al inicio']},
+            'Ciudad': {'descripcion': 'Una bulliciosa ciudad llena de gente.', 'opciones': ['Visitar tienda', 'Ir al mercado', 'Volver al inicio']},
+            'Tienda': {'descripcion': 'Una tienda con diversos objetos a la venta.', 'opciones': ['Comprar espada', 'Comprar pociones', 'Volver a la ciudad']},
+            'Mercado': {'descripcion': 'Un mercado animado con vendedores y clientes.', 'opciones': ['Hablar con comerciantes', 'Volver a la ciudad']}
+        }
+
+    def comenzar_juego(self):
+        nombre_jugador = input("¡Bienvenido! Ingresa tu nombre: ")
+        self.jugador = Jugador(nombre_jugador)
+        self.mostrar_introduccion()
+
+        while True:
+            self.mostrar_ubicacion_actual()
+            opcion_elegida = self.obtener_opcion()
+            self.ejecutar_opcion(opcion_elegida)
+
+            if self.jugador.salud <= 0:
+                print("Tu salud ha llegado a cero. ¡Game over!")
+                break
+
+    def mostrar_introduccion(self):
+        print(f"Bienvenido, {self.jugador.nombre}, a esta emocionante aventura.")
+
+    def mostrar_ubicacion_actual(self):
+        ubicacion_actual = self.ubicaciones[self.jugador.inventario[-1] if self.jugador.inventario else 'Inicio']
+        print(f"\n{ubicacion_actual['descripcion']}")
+        print("Opciones disponibles:")
+        for i, opcion in enumerate(ubicacion_actual['opciones'], 1):
+            print(f"{i}. {opcion}")
+
+    def obtener_opcion(self):
+        while True:
+            try:
+                opcion_elegida = int(input("Elige una opción (número): "))
+                ubicacion_actual = self.ubicaciones[self.jugador.inventario[-1] if self.jugador.inventario else 'Inicio']
+                if 1 <= opcion_elegida <= len(ubicacion_actual['opciones']):
+                    return opcion_elegida
+                else:
+                    print("Opción no válida. Inténtalo de nuevo.")
+            except ValueError:
+                print("Por favor, ingresa un número válido.")
+
+    def ejecutar_opcion(self, opcion):
+        ubicacion_actual = self.ubicaciones[self.jugador.inventario[-1] if self.jugador.inventario else 'Inicio']
+        opcion_elegida = ubicacion_actual['opciones'][opcion - 1]
+
+        if opcion_elegida == 'Volver al inicio':
+            self.jugador.inventario.pop()
+        elif opcion_elegida == 'Explorar':
+            if random.choice([True, False]):
+                print("Encuentras un cofre con una poción. ¡Buena suerte!")
+                self.jugador.inventario.append('Tesoro')
+            else:
+                print("No encuentras nada en esta área. Sigue explorando.")
+        elif opcion_elegida == 'Ir al mercado':
+            if 'Tesoro' in self.jugador.inventario:
+                print("Puedes intercambiar el tesoro en el mercado por una espada mágica.")
+                self.jugador.inventario.remove('Tesoro')
+                self.jugador.inventario.append('Espada mágica')
+            else:
+                print("No tienes nada para intercambiar en el mercado.")
+        elif opcion_elegida == 'Comprar espada':
+            if 'Espada mágica' not in self.jugador.inventario:
+                print("Compraste una espada mágica en la tienda.")
+                self.jugador.inventario.append('Espada mágica')
+            else:
+                print("Ya tienes una espada mágica. ¡No necesitas otra!")
+        elif opcion_elegida == 'Comprar pociones':
+            print("Compraste algunas pociones en la tienda.")
+            self.jugador.inventario.extend(['Poción de salud', 'Poción de velocidad'])
+        elif opcion_elegida == 'Hablar con comerciantes':
+            if 'Poción de salud' in self.jugador.inventario:
+                print("Los comerciantes te agradecen por tu compra y te regalan una poción de salud extra.")
+                self.jugador.inventario.append('Poción de salud')
+            else:
+                print("Los comerciantes te saludan amablemente.")
+        else:
+            if opcion_elegida not in self.ubicaciones:
+                print("Opción no válida. Inténtalo de nuevo.")
+            else:
+                self.jugador.inventario.append(opcion_elegida)
+
+if __name__ == "__main__":
+    juego = JuegoAventuras()
+    juego.comenzar_juego()

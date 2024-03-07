@@ -1,0 +1,36 @@
+const math = require('mathjs');
+
+class EstadisticasAvanzadas {
+    constructor(datos) {
+        this.datos = datos;
+    }
+
+    calcularMedia() {
+        return math.mean(this.datos);
+    }
+
+    calcularDesviacionEstandar() {
+        return math.std(this.datos);
+    }
+
+    generarHistograma(bins) {
+        const histograma = math.histogram(this.datos, bins);
+        return { bins, histograma };
+    }
+
+    imprimirResultados() {
+        console.log('Datos:', this.datos);
+        console.log('Media:', this.calcularMedia());
+        console.log('Desviación Estándar:', this.calcularDesviacionEstandar());
+        console.log('Histograma:', this.generarHistograma(10));
+    }
+}
+
+// Datos de ejemplo
+const datosEjemplo = [5, 8, 10, 15, 20, 25, 30, 35, 40, 45, 50];
+
+// Crear instancia de EstadisticasAvanzadas
+const estadisticas = new EstadisticasAvanzadas(datosEjemplo);
+
+// Imprimir resultados
+estadisticas.imprimirResultados();
